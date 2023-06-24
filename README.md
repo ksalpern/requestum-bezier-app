@@ -2,7 +2,7 @@
 
 The Bezier Curve app allows users to create and manipulate Bezier curves on a canvas. Users can click and drag to add control points that define the shape of the curve. The app supports multiple curves, and each curve can have multiple control points.
 
-Click [here]() to see the app or [here]() to see how it works in my local machine😃
+Click [here](https://ksalpern-bezier-app.vercel.app/) to see the app or [here](https://youtu.be/-q49L6r1HFE) to see how it works in my local machine😃
 
 ![bezier curve](./public/assets/bezierCurve.png)
 
@@ -25,8 +25,10 @@ Click [here]() to see the app or [here]() to see how it works in my local machin
 - The Bezier curves are rendered on the canvas using the control points.
 
 ## Technologies Used
-[React](https://react.dev/): A JavaScript library for building user interfaces.
-[p5.js](): A JavaScript library for creative coding and visualization.
+
+- [React](https://react.dev/): A JavaScript library for building user interfaces.
+
+- [p5.js](https://p5js.org/): A JavaScript library for creative coding and visualization.
 
 ## To get started, follow these steps:
 
