@@ -1,99 +1,122 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect } from "react";
+import p5 from "p5";
 
 const BezierCurve = () => {
-  const [startPoint, setStartPoint] = useState(null);
-  const [endPoint, setEndPoint] = useState(null);
-  const [controlPoint, setControlPoint] = useState(null);
+  const canvasRef = useRef(null);
+  const points = [];
+  let selectedPoint = null;
 
-  const handleImageClick = (event) => {
-    const { offsetX, offsetY } = event.nativeEvent;
+  useEffect(() => {
+    const sketch = (p) => {
+      let backgroundImage;
 
-    if (!startPoint) {
-      setStartPoint({ x: offsetX, y: offsetY });
-    } else if (!endPoint) {
-      setEndPoint({ x: offsetX, y: offsetY });
-    } else {
-      setControlPoint({ x: offsetX, y: offsetY });
-    }
-  };
+      p.preload = () => {
+        backgroundImage = p.loadImage("/assets/1.jpg");
+      };
 
-  const handlePointClick = (point) => (event) => {
-    event.stopPropagation();
+      p.setup = () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        p.createCanvas(width, height);
+        p.image(backgroundImage, 0, 0, width, height);
+      };
 
-    const { offsetX, offsetY } = event.nativeEvent;
+      p.mousePressed = () => {
+        if (p.keyIsDown(p.SHIFT)) {
+          const point = { x: p.mouseX, y: p.mouseY };
+          points.push(point);
+        } else {
+          for (let i = 0; i < points.length; i++) {
+            const point = points[i];
+            const size = 8;
+            const halfSize = size / 2;
+            const x = point.x - halfSize;
+            const y = point.y - halfSize;
+            if (
+              p.mouseX >= x &&
+              p.mouseX <= x + size &&
+              p.mouseY >= y &&
+              p.mouseY <= y + size
+            ) {
+              selectedPoint = i;
+              break;
+            }
+          }
+        }
+      };
 
-    if (point === 'start') {
-      setStartPoint({ x: offsetX, y: offsetY });
-    } else if (point === 'end') {
-      setEndPoint({ x: offsetX, y: offsetY });
-    } else {
-      setControlPoint({ x: offsetX, y: offsetY });
-    }
-  };
+      p.mouseDragged = () => {
+        if (selectedPoint !== null) {
+          points[selectedPoint].x = p.mouseX;
+          points[selectedPoint].y = p.mouseY;
+        }
+      };
 
-  const renderPoints = () => {
-    return (
-      <>
-        {startPoint && (
-          <circle
-            cx={startPoint.x}
-            cy={startPoint.y}
-            r={10}
-            fill="red"
-            onClick={handlePointClick('start')}
-          />
-        )}
-        {endPoint && (
-          <circle
-            cx={endPoint.x}
-            cy={endPoint.y}
-            r={10}
-            fill="maroon"
-            onClick={handlePointClick('end')}
-          />
-        )}
-        {controlPoint && (
-          <circle
-            cx={controlPoint.x}
-            cy={controlPoint.y}
-            r={10}
-            fill="green"
-            onClick={handlePointClick('control')}
-          />
-        )}
-      </>
-    );
-  };
+      p.mouseReleased = () => {
+        selectedPoint = null;
+      };
 
-  const renderBezierCurve = () => {
-    if (startPoint && endPoint && controlPoint) {
-      return (
-        <path
-          d={`M ${startPoint.x} ${startPoint.y} Q ${controlPoint.x} ${controlPoint.y} ${endPoint.x} ${endPoint.y}`}
-          fill="none"
-          stroke="black"
-          strokeWidth={2}
-        />
-      );
-    }
-    return null;
-  };
+      p.draw = () => {
+        p.background(backgroundImage);
+        p.stroke("red");
+        p.strokeWeight(1);
 
-  return (
-    <svg
-      width={800}
-      height={600}
-      onClick={handleImageClick}
-    >
-      <image
-        xlinkHref="/assets/1.jpg"
-        width={800}
-        height={600}
-      />
-      {renderPoints()}
-      {renderBezierCurve()}
-    </svg>
-  );
+        for (let i = 0; i < points.length - 1; i++) {
+          const p0 = points[i];
+          const p1 = points[i + 1];
+          p.line(p0.x, p0.y, p1.x, p1.y);
+        }
+
+        p.stroke(0, 255, 0);
+        p.strokeWeight(2);
+        p.noFill();
+
+        for (const point of points) {
+          const size = 8;
+          const halfSize = size / 2;
+          const x = point.x - halfSize;
+          const y = point.y - halfSize;
+          p.rect(x, y, size, size);
+        }
+
+        if (points.length >= 2) {
+          p.stroke(255, 0, 0);
+          p.stroke("blue");
+          p.strokeWeight(2);
+
+          p.noFill();
+
+          const controlPoints = [];
+          for (let i = 0; i < points.length; i++) {
+            const point = points[i];
+            controlPoints.push(point.x, point.y);
+          }
+
+          p.beginShape();
+          p.curveVertex(controlPoints[0], controlPoints[1]);
+
+          for (let i = 0; i < controlPoints.length - 1; i += 2) {
+            p.curveVertex(
+              controlPoints[i],
+              controlPoints[i + 1],
+              controlPoints[i + 2],
+              controlPoints[i + 3]
+            );
+          }
+
+          p.curveVertex(
+            controlPoints[controlPoints.length - 2],
+            controlPoints[controlPoints.length - 1]
+          );
+          p.endShape();
+        }
+      };
+    };
+
+    new p5(sketch, canvasRef.current);
+  }, []);
+
+  return <div ref={canvasRef}></div>;
 };
 
 export default BezierCurve;
