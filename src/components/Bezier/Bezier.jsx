@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import p5 from "p5";
+import "./Bezier.scss";
 
-const BezierCurve = () => {
+const Bezier = () => {
   const canvasRef = useRef(null);
   const curves = [];
+  console.log(curves);
   let currentCurve = null;
   let selectedPoint = null;
   let activeCurveIndex = -1;
@@ -25,14 +27,14 @@ const BezierCurve = () => {
 
       p.mousePressed = () => {
         if (p.keyIsDown(p.CONTROL)) {
-         // Create a new Bezier curve when Ctrl is pressed
+          // Створення нової кривої Безьє при натисканні Ctrl
           currentCurve = { points: [] };
           curves.push(currentCurve);
           activeCurveIndex = curves.length - 1;
         }
 
         if (p.keyIsDown(p.SHIFT) && currentCurve !== null) {
-          // Add points to the current Bezier curve when Shift is pressed
+          // Додавання точок до поточної кривої Безьє при натисканні Shift
           const point = { x: p.mouseX, y: p.mouseY };
           currentCurve.points.push(point);
         } else {
@@ -82,10 +84,18 @@ const BezierCurve = () => {
 
       p.keyPressed = () => {
         if (p.keyIsDown(p.DELETE) && selectedPoint !== null) {
-          // Delete a point when the Delete key is pressed
+          // Видалення точки при натисканні клавіші Delete
           const { curveIndex, pointIndex } = selectedPoint;
           curves[curveIndex].points.splice(pointIndex, 1);
           selectedPoint = null;
+        }
+
+        if (p.keyIsDown(p.CONTROL)) {
+          if (p.keyIsDown(88)) {
+            curves.length = 0;
+            selectedPoint = null;
+            activeCurveIndex = -1;
+          }
         }
       };
 
@@ -108,9 +118,13 @@ const BezierCurve = () => {
               i === selectedPoint.curveIndex &&
               j === selectedPoint.pointIndex
             ) {
-              p.stroke("yellow"); // Yellow color for an active point
+              p.stroke("yellow"); // Зелений колір для активної точки
               p.strokeWeight(4);
             }
+            // else if (i === activeCurveIndex) {
+            //   p.stroke("brown"); // Коричневий колір для активної кривої
+            //   p.strokeWeight(2);
+            // }
             else {
               p.stroke("red");
               p.strokeWeight(2);
@@ -133,10 +147,10 @@ const BezierCurve = () => {
                 i === selectedPoint.curveIndex &&
                 j === selectedPoint.pointIndex
               ) {
-                // p.stroke("blue"); // bkue color for active point
+                // p.stroke("blue"); // Зелений колір для активної точки
                 // p.strokeWeight(4);
               } else if (i === activeCurveIndex) {
-                p.stroke("brown"); // brown color for active point
+                p.stroke("brown"); // Коричневий колір для активної кривої
                 p.strokeWeight(2);
               } else {
                 p.stroke("blue");
@@ -169,7 +183,7 @@ const BezierCurve = () => {
     new p5(sketch, canvasRef.current);
   }, [curves]);
 
-  return <div ref={canvasRef}></div>;
+  return <div className="bezier" ref={canvasRef}></div>;
 };
 
-export default BezierCurve;
+export default Bezier;

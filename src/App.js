@@ -1,10 +1,13 @@
 import React from "react";
-import BezierCurve from "./components/BezierCurve";
+import Bezier from "./components/Bezier/Bezier";
+import ControlButtons from "./components/ControlButtons/ControlButtons";
+
 
 function App() {
   return (
     <div className="app">
-      <BezierCurve />
+      <Bezier />
+      <ControlButtons />
     </div>
   );
 }
