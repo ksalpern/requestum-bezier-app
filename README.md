@@ -2,7 +2,7 @@
 
 The Bezier Curve app allows users to create and manipulate Bezier curves on a canvas. Users can click and drag to add control points that define the shape of the curve. The app supports multiple curves, and each curve can have multiple control points.
 
-Click [here](https://ksalpern-bezier-app.vercel.app/) to see the app or [here](https://youtu.be/-q49L6r1HFE) to see how it works in my local machine😃
+Click [here](https://ksalpern-bezier-app.vercel.app/) to see the app or [here](https://www.youtube.com/watch?v=8ivvsbogO38) to see how it works in my local machine😃
 
 ![bezier curve](./public/assets/bezierCurve.png)
 
